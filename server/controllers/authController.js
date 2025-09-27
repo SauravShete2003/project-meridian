@@ -17,4 +17,13 @@ export const login = async (req, res) => {
   }
 };
 
+export const seedAdmin = async (req, res) => {
+  const exists = await User.findOne({ email: "admin@admin.com" });
+  if (exists) return res.status(400).json({ message: "Admin already exists" });
 
+  const user = await User.create({
+    email: "admin@admin.com",
+    password: "password",
+  });
+  res.json(user);
+};
