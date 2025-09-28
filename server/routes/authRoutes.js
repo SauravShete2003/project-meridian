@@ -1,8 +1,10 @@
 import express from "express";
-import { login, seedAdmin } from "../controllers/authController.js";
+import { login, seedAdmin , register , getAllUsers} from "../controllers/authController.js";
 
 const router = express.Router();
 router.post("/login", login);
 router.post("/seed", seedAdmin);
+router.post("/register", register);
+router.get("/users", getAllUsers);
 
 export default router;
