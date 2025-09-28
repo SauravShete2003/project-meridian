@@ -4,7 +4,7 @@ const assignmentSchema = new mongoose.Schema({
     agentId : { type: mongoose.Schema.Types.ObjectId, ref: 'Agent', required: true },
     items : [
         {
-            fisrtName: String,
+            firstName: String,
             phone : String,
             notes : String,
         }
