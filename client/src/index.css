@@ -1,14 +1,16 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+:root{
+  --bg: #F7F8FA;
+  --surface: #FFFFFF;
+  --muted: #E6E9EE;
+  --text: #0F1724;
+  --text-muted: #64748B;
+  --accent: #2563EB;
+  --glass: rgba(255,255,255,0.6);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -28,6 +30,11 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+}
+
+/* Utility resets for our layout */
+main, #root {
+  width: 100%;
 }
 
 h1 {
@@ -55,14 +62,15 @@ button:focus-visible {
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  /* keep the token defaults for light */
+}
+
+[data-theme='dark']{
+  --bg: #0B1220;
+  --surface: #0F1724;
+  --muted: #151A23;
+  --text: #E6EEF6;
+  --text-muted: #9AA7B8;
+  --accent: #4F8BFF;
+  --glass: rgba(11,18,32,0.6);
 }
