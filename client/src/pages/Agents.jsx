@@ -5,7 +5,7 @@ export default function Agents() {
   const [agents, setAgents] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -32,13 +32,13 @@ export default function Agents() {
       setError("Password must be at least 6 characters long");
       return;
     }
-    if (!validatePhone(mobile)) {
-      setError("Phone must include country code, e.g., +1 1234567890");
+    if (!validatePhone(phone)) {
+      setError("Phone must include country code, e.g., +91 93847378");
       return;
     }
     try {
-      await API.post("/agents", { name, email, mobile, password });
-      setName(""); setEmail(""); setMobile(""); setPassword("");
+      await API.post("/agents", { name, email, phone, password });
+      setName(""); setEmail(""); setPhone(""); setPassword("");
       load();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to add agent");
@@ -70,11 +70,11 @@ export default function Agents() {
           />
           <input
             type="tel"
-            placeholder="Mobile with country code, e.g., +1 1234567890"
-            value={mobile}
-            onChange={e => setMobile(e.target.value)}
+            placeholder="Phone with country code, e.g., +91 93847378"
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
             pattern="^\+\d{1,3}[\s\-]?\d{1,15}$"
-            title="Phone must include country code, e.g., +1 1234567890"
+            title="Phone must include country code, e.g., +91 93847378"
             className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />

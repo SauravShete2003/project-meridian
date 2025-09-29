@@ -11,4 +11,8 @@ API.interceptors.request.use((req) => {
 // Helper functions for specific endpoints
 export const getAssignments = () => API.get("/assignments");
 
+export const getAgents = () => API.get("/agents");
+
+export const createAgent = (agentData) => API.post("/agents", agentData);
+
 export default API;

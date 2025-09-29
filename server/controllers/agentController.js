@@ -3,14 +3,10 @@ import Agent from '../models/Agent.js';
 export const addAgent = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
-
-    // Check if email already exists
     const existingAgent = await Agent.findOne({ email });
     if (existingAgent) {
       return res.status(400).json({ message: "Agent with this email already exists" });
     }
-
-    // Validate password length
     if (password.length < 6) {
       return res.status(400).json({ message: "Password must be at least 6 characters long" });
     }
@@ -33,7 +29,7 @@ export const addAgent = async (req, res) => {
 
 export const getAgents = async (req, res)=> {
   try {
-    const agents = await Agent.find().select("-password"); // Exclude password from response
+    const agents = await Agent.find().select("-password");
     res.status(200).json(agents);
   } catch (error) {
     res.status(500).json({ message: "Server error" });

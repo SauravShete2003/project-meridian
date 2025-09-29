@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-// Regex for phone with country code: starts with +, followed by 1-3 digits, then space or -, then number
 const phoneRegex = /^\+\d{1,3}[\s\-]?\d{1,15}$/;
 
 const agentSchema = new mongoose.Schema({
