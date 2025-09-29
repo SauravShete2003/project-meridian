@@ -16,7 +16,7 @@ export default function Login() {
     try {
       const { data } = await API.post("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
-      nav("/dashboard");
+      nav("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     } finally {

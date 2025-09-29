@@ -15,7 +15,7 @@ export default function Layout() {
           <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
         </div>
         <nav className="mt-4">
-          <Link to="/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Home</Link>
+          <Link to="/" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Home</Link>
           <Link to="agents" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Agents</Link>
           <Link to="upload" className="block px-4 py-2 text-gray-700 hover:bg-gray-200">Upload</Link>
         </nav>

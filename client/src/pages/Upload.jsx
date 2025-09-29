@@ -22,7 +22,7 @@ export default function Upload() {
       const { data } = await API.post("/upload", form);
       alert(data.message || "Uploaded and distributed!");
       setFile(null);
-      loadAssignments(); // Refresh assignments after upload
+      loadAssignments();
     } catch (err) {
       setError(err.response?.data?.message || "Upload failed");
     } finally {
@@ -60,7 +60,7 @@ export default function Upload() {
     try {
       await createAgent(newAgent);
       setNewAgent({ name: "", email: "", phone: "", password: "" });
-      await loadAgents(); // Refresh agents list
+      await loadAgents();
     } catch (err) {
       setAgentError(err.response?.data?.message || "Failed to add agent");
     } finally {
@@ -161,25 +161,34 @@ export default function Upload() {
           </button>
         </form>
       </div>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">Distributed Lists</h3>
-        {assignments?.length === 0 ? (
-          <p className="text-gray-600">No assignments yet.</p>
-        ) : (
-          assignments.map(ass => (
-            <div key={ass._id} className="mb-4 border-b pb-4">
-              <h4 className="font-medium text-gray-800">{ass.agentId.name} ({ass.agentId.email}) - {ass.agentId.phone}</h4>
-              <ul className="mt-2 space-y-1">
-                {ass.items.map((item, idx) => (
-                  <li key={idx} className="text-sm text-gray-600">
-                    {item.FirstName} - {item.Phone} - {item.Notes}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        )}
+     <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+  <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+    📋 Distributed Lists
+  </h3>
+
+  {assignments?.length === 0 ? (
+    <p className="text-gray-500 text-center py-6 bg-gray-50 rounded-lg">
+      No assignments yet.
+    </p>
+  ) : (
+    assignments.map(ass => (
+      <div
+        key={ass._id}
+        className="mb-5 bg-gray-50 hover:bg-gray-100 transition-all duration-200 rounded-lg p-4 border border-gray-200"
+      >
+        <h4 className="text-lg font-medium text-gray-800 flex justify-between items-center">
+          <span>{ass.agentId.name}</span>
+          <span className="text-sm text-gray-500">{ass.agentId.email}</span>
+        </h4>
+
+        <p className="text-sm text-gray-600 mt-1">
+          📞 {ass.agentId.phone}
+        </p>
       </div>
+    ))
+  )}
+</div>
+
     </div>
-  );
+  )
 }
