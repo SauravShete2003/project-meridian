@@ -1,12 +1,18 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const nav = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    nav("/");
+  };
 
   const navLinks = [
-    { name: "Features", to: "/#features" },
     { name: "Agents", to: "/agents" },
     { name: "Upload", to: "/upload" },
   ];
@@ -38,12 +44,21 @@ export default function Navbar() {
             </Link>
           ))}
 
-          <Link
-            to="/dashboard"
-            className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white shadow hover:shadow-lg transition transform hover:-translate-y-0.5 text-sm"
-          >
-            Get Started
-          </Link>
+          {token ? (
+            <button
+              onClick={logout}
+              className="px-4 py-2 rounded-lg bg-red-500 text-white shadow hover:shadow-lg transition text-sm"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white shadow hover:shadow-lg transition text-sm"
+            >
+              Login
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -91,13 +106,22 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <Link
-              to="/dashboard"
-              onClick={() => setOpen(false)}
-              className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-center shadow hover:shadow-lg transition"
-            >
-              Get Started
-            </Link>
+            {token ? (
+              <button
+                onClick={() => { logout(); setOpen(false); }}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white text-center shadow hover:shadow-lg transition"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="px-4 py-2 rounded-lg bg-[var(--accent)] text-white text-center shadow hover:shadow-lg transition"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       )}

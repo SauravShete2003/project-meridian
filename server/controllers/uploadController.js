@@ -5,41 +5,99 @@ import multer from "multer";
 import csv from "csv-parser";
 import xlsx from "xlsx";
 import fs from "fs";
+import path from "path";
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({
+  dest: "server/uploads/",
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /csv|xlsx|xls/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error("Only .csv, .xlsx, and .xls files are allowed"));
+    }
+  }
+});
 export const uploadMiddleware = upload.single("file");
 
 export const uploadFile = async (req, res) => {
-  const file = req.file;
-  const agents = await Agent.find();
-  if (agents.length < 1) return res.status(400).json({ msg: "No agents found" });
+  try {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
 
-  let items = [];
+    const agents = await Agent.find();
+    if (agents.length !== 5) {
+      fs.unlinkSync(file.path); // Clean up file
+      return res.status(400).json({ message: "Exactly 5 agents are required for distribution" });
+    }
 
-  if (file.mimetype.includes("csv")) {
-    fs.createReadStream(file.path)
-      .pipe(csv())
-      .on("data", data => items.push(data))
-      .on("end", async () => {
+    let items = [];
+
+    if (file.mimetype.includes("csv")) {
+      fs.createReadStream(file.path)
+        .pipe(csv())
+        .on("data", data => items.push(data))
+        .on("end", async () => {
+          fs.unlinkSync(file.path);
+          const validationError = validateItems(items);
+          if (validationError) {
+            return res.status(400).json({ message: validationError });
+          }
+          await saveAssignments(items, agents, res);
+        })
+        .on("error", (err) => {
+          fs.unlinkSync(file.path);
+          res.status(400).json({ message: "Error parsing CSV file" });
+        });
+    } else {
+      // Handle xlsx or xls
+      try {
+        const wb = xlsx.readFile(file.path);
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        items = xlsx.utils.sheet_to_json(ws);
         fs.unlinkSync(file.path);
+        const validationError = validateItems(items);
+        if (validationError) {
+          return res.status(400).json({ message: validationError });
+        }
         await saveAssignments(items, agents, res);
-      });
-  } else {
-    const wb = xlsx.readFile(file.path);
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    items = xlsx.utils.sheet_to_json(ws);
-    fs.unlinkSync(file.path);
-    await saveAssignments(items, agents, res);
+      } catch (err) {
+        fs.unlinkSync(file.path);
+        res.status(400).json({ message: "Error parsing XLSX/XLS file" });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Server error during upload" });
   }
 };
 
-const saveAssignments = async (items, agents, res) => {
-  const dist = distributeItems(items, agents);
-
-  let results = [];
-  for (let agentId in dist) {
-    const ass = await Assignment.create({ agentId, items: dist[agentId] });
-    results.push(ass);
+const validateItems = (items) => {
+  if (items.length === 0) {
+    return "File is empty or has no valid data";
   }
-  res.json(results);
+  for (let item of items) {
+    if (!item.FirstName || !item.Phone || !item.Notes) {
+      return "File must contain columns: FirstName, Phone, Notes";
+    }
+  }
+  return null;
+};
+
+const saveAssignments = async (items, agents, res) => {
+  try {
+    const dist = distributeItems(items, agents);
+
+    let results = [];
+    for (let agentId in dist) {
+      const ass = await Assignment.create({ agentId, items: dist[agentId] });
+      results.push(ass);
+    }
+    res.json({ message: "File uploaded and distributed successfully", assignments: results });
+  } catch (error) {
+    res.status(500).json({ message: "Error saving assignments" });
+  }
 };

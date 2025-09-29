@@ -8,4 +8,7 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
+// Helper functions for specific endpoints
+export const getAssignments = () => API.get("/assignments");
+
 export default API;
